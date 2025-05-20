@@ -8,16 +8,23 @@ st.title("LLM Chat")
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+
 def get_llm_response(history):
     try:
         response = llm.invoke(history)
         return response.content.strip()
     except Exception as e:
         return f"Error: {e}"
-    
+
+
 st.session_state.setdefault("input_value", "")
 
-user_input = st.text_input("You:", key="input", value=st.session_state.get("input_value", ""), placeholder="Type your message...")
+user_input = st.text_input(
+    "You:",
+    key="input",
+    value=st.session_state.get("input_value", ""),
+    placeholder="Type your message...",
+)
 
 if st.button("Send") and user_input:
     st.session_state.chat_history.append(HumanMessage(content=user_input))
