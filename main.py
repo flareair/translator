@@ -1,19 +1,29 @@
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_ollama.llms import OllamaLLM
+import streamlit as st
 
-if __name__ != "__main__":
-    raise Exception("Not run as main file!")
+from langchain_ollama import ChatOllama
+from langchain.schema import AIMessage, HumanMessage
 
-template = """Question: {question}
+# Create a ChatOllama instance
+llm = ChatOllama(model="llama3")
 
-Answer: Let's think step by step."""
+st.title("Llama 3 Chatbot (ChatOllama + LangChain)")
 
-prompt = ChatPromptTemplate.from_template(template)
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-model = OllamaLLM(model="llama3.2")
+user_input = st.text_input("You:", key="input")
 
-chain = prompt | model
+if st.button("Send") and user_input:
+    # Add human message
+    st.session_state.chat_history.append(HumanMessage(content=user_input))
 
-result = chain.invoke({"question": "What is LangChain?"})
+    # Generate AI response
+    response = llm(st.session_state.chat_history)
+    st.session_state.chat_history.append(AIMessage(content=response.content.strip()))
 
-print(result)
+# Show chat history
+for msg in st.session_state.chat_history:
+    if isinstance(msg, HumanMessage):
+        st.markdown(f"**You:** {msg.content}")
+    else:
+        st.markdown(f"**Llama:** {msg.content}")
