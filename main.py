@@ -6,7 +6,7 @@ from langchain.schema import AIMessage, HumanMessage
 # Create a ChatOllama instance
 llm = ChatOllama(model="llama3")
 
-st.title("Llama 3 Chatbot (ChatOllama + LangChain)")
+st.title("LLM Chat")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
