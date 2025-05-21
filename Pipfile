@@ -6,11 +6,11 @@ name = "pypi"
 [packages]
 langchain = "*"
 langchain-ollama = "*"
-black = "*"
 streamlit = "*"
-watchdog = "*"
 
 [dev-packages]
+watchdog = "*"
+black = "*"
 
 [requires]
 python_version = "3.12"
