@@ -8,6 +8,9 @@ st.title("LLM Translator")
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+if "generation_in_progress" not in st.session_state:
+    st.session_state.generation_in_progress = False
+
 
 def get_llm_response(history):
     try:
@@ -25,21 +28,28 @@ for msg in st.session_state.chat_history:
         with st.chat_message("assistant"):
             st.markdown(msg.content)
 
-
-def onButtonClick():
-    if st.session_state.user_input == "":
-        return
-
+if prompt := st.chat_input(
+    key="user_input",
+    placeholder="Type your request...",
+    disabled=st.session_state.generation_in_progress,
+):
     print("Button clicked")
     print("User prompt: ", st.session_state.user_input)
+
+    st.session_state.generation_in_progress = True
+
+    with st.chat_message("human"):
+        st.markdown(st.session_state.user_input)
 
     st.session_state.chat_history.append(
         HumanMessage(content=st.session_state.user_input)
     )
-    ai_response = get_llm_response(st.session_state.chat_history)
+
+    with st.chat_message("assistant"):
+        with st.empty():
+            with st.spinner("Generating response...", show_time=True):
+                ai_response = get_llm_response(st.session_state.chat_history)
+            st.markdown(ai_response)
+
     st.session_state.chat_history.append(AIMessage(content=ai_response))
-
-
-st.chat_input(
-    key="user_input", placeholder="Type your message...", on_submit=onButtonClick
-)
+    st.session_state.generation_in_progress = False
