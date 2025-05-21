@@ -17,32 +17,29 @@ def get_llm_response(history):
         return f"Error: {e}"
 
 
-input_text = st.text_area(
-    "You:",
-    key="user_input",
-    value=st.session_state.get("input_value"),
-    placeholder="Type your message...",
-)
+for msg in st.session_state.chat_history:
+    if isinstance(msg, HumanMessage):
+        with st.chat_message("human"):
+            st.markdown(msg.content)
+    else:
+        with st.chat_message("assistant"):
+            st.markdown(msg.content)
 
 
 def onButtonClick():
-    if input_text == "":
+    if st.session_state.user_input == "":
         return
 
     print("Button clicked")
     print("User prompt: ", st.session_state.user_input)
 
-    st.session_state.chat_history.append(HumanMessage(content=input_text))
+    st.session_state.chat_history.append(
+        HumanMessage(content=st.session_state.user_input)
+    )
     ai_response = get_llm_response(st.session_state.chat_history)
     st.session_state.chat_history.append(AIMessage(content=ai_response))
 
-    st.session_state.user_input = ""  # Clean up the input field
 
-
-st.button("Send", on_click=onButtonClick)
-
-for msg in st.session_state.chat_history:
-    if isinstance(msg, HumanMessage):
-        st.markdown(f"**You:** {msg.content}")
-    else:
-        st.markdown(f"**Llama:** {msg.content}")
+st.chat_input(
+    key="user_input", placeholder="Type your message...", on_submit=onButtonClick
+)
