@@ -2,8 +2,8 @@ import streamlit as st
 from langchain_ollama import ChatOllama
 from langchain.schema import AIMessage, HumanMessage
 
-llm = ChatOllama(model="llama3")
-st.title("LLM Chat")
+llm = ChatOllama(model="llama3.2")
+st.title("LLM Translator")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -17,20 +17,29 @@ def get_llm_response(history):
         return f"Error: {e}"
 
 
-st.session_state.setdefault("input_value", "")
-
-user_input = st.text_input(
+input_text = st.text_area(
     "You:",
-    key="input",
-    value=st.session_state.get("input_value", ""),
+    key="user_input",
+    value=st.session_state.get("input_value"),
     placeholder="Type your message...",
 )
 
-if st.button("Send") and user_input:
-    st.session_state.chat_history.append(HumanMessage(content=user_input))
+
+def onButtonClick():
+    if input_text == "":
+        return
+
+    print("Button clicked")
+    print("User prompt: ", st.session_state.user_input)
+
+    st.session_state.chat_history.append(HumanMessage(content=input_text))
     ai_response = get_llm_response(st.session_state.chat_history)
     st.session_state.chat_history.append(AIMessage(content=ai_response))
-    st.rerun()
+
+    st.session_state.user_input = ""  # Clean up the input field
+
+
+st.button("Send", on_click=onButtonClick)
 
 for msg in st.session_state.chat_history:
     if isinstance(msg, HumanMessage):
