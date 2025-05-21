@@ -12,7 +12,7 @@ if "generation_in_progress" not in st.session_state:
     st.session_state.generation_in_progress = False
 
 
-def get_llm_response(history):
+def get_llm_response(history: list[HumanMessage | AIMessage]) -> str:
     try:
         response = llm.invoke(history)
         return response.content.strip()
