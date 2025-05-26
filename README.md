@@ -1,1 +1,1 @@
-# Langchain chat experiments
+# Langchain chat app
