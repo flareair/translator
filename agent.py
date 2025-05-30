@@ -17,7 +17,7 @@ class State(TypedDict):
 
 graph_builder = StateGraph(State)
 
-llm = init_chat_model(ollama_model="llama3.2", temperature=0.5)
+llm = init_chat_model(model="llama3.2", model_provider="ollama", temperature=0.5)
 
 
 def chat_bot(state: State):
